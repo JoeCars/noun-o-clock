@@ -84,7 +84,7 @@ client.on('ready', async () => {
       timeStuff.logTimeToNounOClock(currentAuction);
       updateBotActivity();
 
-  }, 60000); 
+  }, 5000); 
 
 }); 
 
@@ -97,7 +97,8 @@ function updateBotActivity() {
 
    let hours = tDiff.hours.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
    let minutes = tDiff.minutes.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
+   let seconds = tDiff.seconds.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
 
-   client.user.setActivity(hours + ":" + minutes, { type: "WATCHING" });
+   client.user.setActivity(hours + ":" + minutes + ":" + seconds, { type: "WATCHING" });
 
 }
