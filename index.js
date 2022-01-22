@@ -38,7 +38,7 @@ async function tick() {
   updateBotActivity();
 }
 
-
+// END TIME IS SET ONCE TIME HITS ZERO!!
 
 
 async function updateAuctionData() {
@@ -46,9 +46,9 @@ async function updateAuctionData() {
   let tDiff = TimeStuff.timeDiffCalc(currentAuction.endTime,Date.now());
 
   //update auction cache on init, and when there is less than 5 minutes left.
-  if(doonce || (tDiff.hours < 1 && tDiff.minutes < 5 )){
+  if(doonce || (tDiff.hours < 1 && tDiff.minutes < 4 || waitingForNounOClock == false )){
 
-    if(tDiff.hours < 1 && tDiff.minutes < 1 && tDiff.seconds < 1){
+    if(!doonce && (tDiff.hours < 1 && tDiff.minutes < 1 && tDiff.seconds < 1)){
 
       if(waitingForNounOClock){
         console.log("Posting Noun-O-Clock Notification to Discord");
