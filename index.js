@@ -49,7 +49,6 @@ async function updateAuctionData() {
   if(doonce || (tDiff.hours < 1 && tDiff.minutes < 5 )){
 
     if(tDiff.hours < 1 && tDiff.minutes < 1){
-      waitingForNounOClock = false;
 
       if(waitingForNounOClock){
         console.log("Posting Noun-O-Clock Notification to Discord");
