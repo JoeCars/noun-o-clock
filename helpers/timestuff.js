@@ -19,18 +19,17 @@ function timeDiffCalc(dateFuture, dateNow) {
     return {"days":days, "hours":hours, "minutes":minutes, "seconds":seconds};
 }
 
-function logTimeToNounOClock(currentAuction){
-    let endTime = new Date(parseInt(currentAuction.endTime) * 1000);
-    let curTime = Date.now();
-  
-    let tDiff = timeDiffCalc(endTime, curTime);
-    console.log(JSON.stringify(tDiff));
-  }
 
+function formatDate(date){
+    var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    return date.toLocaleDateString("en-US", options);
+}
+
+  
 module.exports.timeDiffCalc = function(dateFuture, dateNow) {
     return timeDiffCalc(dateFuture, dateNow);
 }
 
-module.exports.logTimeToNounOClock = function(currentAuction) {
-    return logTimeToNounOClock(currentAuction);
+module.exports.formatDate = function(date) {
+    return formatDate(date);
 }
