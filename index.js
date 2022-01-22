@@ -65,7 +65,7 @@ async function updateAuctionData() {
     let index = 0;
     doonce = false;
 
-
+    console.log("OLD ID: "+currentAuction.id+" NEW ID:"+data.auctions[0].id);
     if(currentAuction.id != data.auctions[0].id) {
       waitingForNounOClock = true;
         //if the current Noun ends with 9, the next one released will be Nouner + additional
