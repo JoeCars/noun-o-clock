@@ -48,7 +48,7 @@ async function updateAuctionData() {
   //update auction cache on init, and when there is less than 5 minutes left.
   if(doonce || (tDiff.hours < 1 && tDiff.minutes < 5 )){
 
-    if(tDiff.hours < 1 && tDiff.minutes < 1){
+    if(tDiff.hours < 1 && tDiff.minutes < 1 && tDiff.seconds < 1){
 
       if(waitingForNounOClock){
         console.log("Posting Noun-O-Clock Notification to Discord");
