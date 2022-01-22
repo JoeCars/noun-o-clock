@@ -1,12 +1,13 @@
 require('dotenv').config();
 
-const { Client } = require('discord.js');
+const { Client, Intents } = require('discord.js');
 const token = process.env.DISCORD_TOKEN;
-const client = new Client({intents: []});
+const client = new Client({intents: [Intents.FLAGS.GUILDS]});
 const TimeStuff = require('./helpers/timestuff.js');
 const NounsDAO = require('./helpers/nounsdao.js');
 
 let doonce = true;
+let waitingForNounOClock = true;
 const tAuctionUpdate = 4100;
 let currentAuction = {
    id:0,
@@ -18,6 +19,13 @@ let currentAuction = {
 client.login(token);
 
 client.on('ready', async () => {
+
+   client.channels.cache.get(process.env.DISCORD_CHANNEL_ID).send("It's Noun-O-Clock! Help choose the next Noun with https://fomonouns.wtf/")
+
+   //console.log(client.channels);
+  //  client.channels.fetch('222109930545610754')
+  // .then(channel =>  channel.send("It's Noun-O-Clock! Help choose the next Noun with https://fomonouns.wtf/"))
+  // .catch(console.error);
 
    console.log("Noun-O-Clock Bot Ready");
    tick();
@@ -48,7 +56,9 @@ async function updateAuctionData() {
   if(doonce || (tDiff.hours < 1 && tDiff.minutes < 5 )){
 
     if(tDiff.hours < 1 && tDiff.minutes < 1){
+      waitingForNounOClock = false;
       console.log("Waiting for Auction Settlement");
+
     }  
 
     const data = await NounsDAO.getLatestAuctions();
