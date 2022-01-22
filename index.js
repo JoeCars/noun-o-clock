@@ -43,7 +43,7 @@ async function tick() {
 
 async function updateAuctionData() {
 
-  let tDiff = TimeStuff.timeDiffCalc(currentAuction.endTime);
+  let tDiff = TimeStuff.timeDiffCalc(currentAuction.endTime,Date.now());
 
   //update auction cache on init, and when there is less than 5 minutes left.
   console.log("Poll more frequently? " + tDiff.hours + " " + tDiff.minutes);
