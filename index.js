@@ -46,10 +46,7 @@ async function updateAuctionData() {
   let tDiff = TimeStuff.timeDiffCalc(currentAuction.endTime,Date.now());
 
   //update auction cache on init, and when there is less than 5 minutes left.
-  console.log("Poll more frequently? " + tDiff.hours + " " + tDiff.minutes);
   if(doonce || (tDiff.hours < 1 && tDiff.minutes < 5 )){
-
-    console.log("Polling more frequently");
 
     if(tDiff.hours < 1 && tDiff.minutes < 1 && tDiff.seconds < 1){
 
