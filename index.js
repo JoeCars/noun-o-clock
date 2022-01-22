@@ -84,7 +84,7 @@ client.on('ready', async () => {
       timeStuff.logTimeToNounOClock(currentAuction);
       updateBotActivity();
 
-  }, 5000); 
+  }, 4500); 
 
 }); 
 
