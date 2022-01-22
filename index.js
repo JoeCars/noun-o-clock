@@ -20,13 +20,6 @@ client.login(token);
 
 client.on('ready', async () => {
 
-   client.channels.cache.get(process.env.DISCORD_CHANNEL_ID).send("It's Noun-O-Clock! Help choose the next Noun with https://fomonouns.wtf/")
-
-   //console.log(client.channels);
-  //  client.channels.fetch('222109930545610754')
-  // .then(channel =>  channel.send("It's Noun-O-Clock! Help choose the next Noun with https://fomonouns.wtf/"))
-  // .catch(console.error);
-
    console.log("Noun-O-Clock Bot Ready");
    tick();
 
@@ -57,6 +50,12 @@ async function updateAuctionData() {
 
     if(tDiff.hours < 1 && tDiff.minutes < 1){
       waitingForNounOClock = false;
+
+      if(waitingForNounOClock){
+        console.log("Posting Noun-O-Clock Notification to Discord");
+        client.channels.cache.get(process.env.DISCORD_CHANNEL_ID).send("It's Noun-O-Clock! Help choose the next Noun with https://fomonouns.wtf/")
+        waitingForNounOClock = false;
+      }
       console.log("Waiting for Auction Settlement");
 
     }  
@@ -69,6 +68,7 @@ async function updateAuctionData() {
 
 
     if(currentAuction.id != data.auctions[0].id) {
+      waitingForNounOClock = true;
         //if the current Noun ends with 9, the next one released will be Nouner + additional
         if((currentAuction.id % 10 == 9) && (currentAuction.id < 1825)) {
           console.log("New Nounder Noun: "+ data.auctions[1].id);
