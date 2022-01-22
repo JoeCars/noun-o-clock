@@ -45,7 +45,7 @@ async function updateAuctionData() {
   let tDiff = TimeStuff.timeDiffCalc(currentAuction.endTime);
 
   //update auction cache on init, and when there is less than 5 minutes left.
-  if(doonce || true /*(tDiff.hours < 1 && tDiff.minutes < 5 )*/){
+  if(doonce || true (tDiff.hours < 1 && tDiff.minutes < 5 )){
 
     if(tDiff.hours < 1 && tDiff.minutes < 1){
       console.log("Waiting for Auction Settlement");
