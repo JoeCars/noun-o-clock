@@ -116,7 +116,7 @@ async function updateBotActivity() {
    if(waitingForNounOClock) {
     client.user.setActivity(hours + ":" + minutes + ":" + seconds, { type: "WATCHING" });
    } else {
-    client.user.setActivity("fomonouns.wtf", { type: "PLAYING" });
+    client.user.setActivity("🔥fomonouns.wtf 🔥", { type: "PLAYING" });
    }
 
 }
