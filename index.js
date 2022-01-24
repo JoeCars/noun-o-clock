@@ -52,7 +52,7 @@ async function updateAuctionData() {
 
       if(waitingForNounOClock){
         console.log("Posting Noun-O-Clock Notification to Discord");
-        client.channels.cache.get(process.env.DISCORD_CHANNEL_ID).send("It's Noun-O-Clock! Help choose the next Noun with https://fomonouns.wtf/")
+        client.channels.cache.get(process.env.DISCORD_CHANNEL_ID).send("It's Noun O'Clock! Help choose the next Noun with https://fomonouns.wtf/")
         waitingForNounOClock = false;
       }
       console.log("Waiting for Auction Settlement");
@@ -113,6 +113,10 @@ async function updateBotActivity() {
    let minutes = tDiff.minutes.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
    let seconds = tDiff.seconds.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
 
-   client.user.setActivity(hours + ":" + minutes + ":" + seconds, { type: "WATCHING" });
+   if(waitingForNounOClock) {
+    client.user.setActivity(hours + ":" + minutes + ":" + seconds, { type: "WATCHING" });
+   } else {
+    client.user.setActivity("fomonouns.wtf", { type: "PLAYING" });
+   }
 
 }
