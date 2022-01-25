@@ -135,15 +135,15 @@ async function shareAuctionData() {
 
       //if the current Noun ends with 1, the previous one was also released to Nouners. For 5 years.
       
-      if((currentAuction[0].id % 10 == 1) && (currentAuction[0].id < 1825)) {
+      if((curAuctionData[0].id % 10 == 1) && (curAuctionData[0].id < 1825)) {
 
-        let message5Nounder = "New Nounder Noun: "+ currentAuction[1].id;
+        let message5Nounder = "New Nounder Noun: "+ curAuctionData[1].id;
         console.log("POSTING TO DISCORD: " + message5Nounder);
         client.channels.cache.get(process.env.DISCORD_CHANNEL_ID).send(message5Nounder);
 
       }
 
-      let message5 = "New Noun: "+ currentAuction[0].id;
+      let message5 = "New Noun: "+ curAuctionData[0].id;
       console.log("POSTING TO DISCORD: " + message5);
       client.channels.cache.get(process.env.DISCORD_CHANNEL_ID).send(message5);
       break;
@@ -160,7 +160,7 @@ async function updateBot() {
 
     if(auctionState == 3 || auctionState == 4) {
   
-      client.user.setActivity("🔥fomonouns.wtf 🔥", { type: "PLAYING" });
+      client.user.setActivity("🔥 fomonouns.wtf 🔥", { type: "PLAYING" });
   
     } else {
   
