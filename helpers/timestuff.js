@@ -25,6 +25,17 @@ function formatDate(date){
     return date.toLocaleDateString("en-US", options);
 }
 
+
+function formatDateCountdown (date) {
+
+    const tDiff = timeDiffCalc(date, Date.now());
+
+    const hours = tDiff.hours.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
+    const minutes = tDiff.minutes.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
+    const seconds = tDiff.seconds.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
+    
+    return hours + ":" + minutes + ":" + seconds;
+}
   
 module.exports.timeDiffCalc = function(dateFuture, dateNow) {
     return timeDiffCalc(dateFuture, dateNow);
@@ -32,4 +43,8 @@ module.exports.timeDiffCalc = function(dateFuture, dateNow) {
 
 module.exports.formatDate = function(date) {
     return formatDate(date);
+}
+
+module.exports.formatDateCountdown = function(date) {
+    return formatDateCountdown(date);
 }

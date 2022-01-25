@@ -6,14 +6,20 @@ const client = new Client({intents: [Intents.FLAGS.GUILDS]});
 const TimeStuff = require('./helpers/timestuff.js');
 const NounsDAO = require('./helpers/nounsdao.js');
 
-let doonce = true;
-let waitingForNounOClock = true;
-const tAuctionUpdate = 4100;
-let currentAuction = {
-   id:0,
-   settled:false,
-   endTime:Date.now()
-};
+const auctionStateDescriptors = [
+  `0 - Get Auction Data`,
+  `1 - Counting Down`,
+  `2 - < 5 min left`,
+  `3 - Noun O'Clock!`,
+  `4 - Waiting for Settlement`,
+  `5 - New Noun Minted!`,
+];
+
+const tickInterval = 4100;
+let curAuctionData = [];
+let auctionState = -1;
+let nounID = -1;
+
 
 
 client.login(token);
@@ -25,98 +31,153 @@ client.on('ready', async () => {
 
    setInterval(() => {
      tick();
-  }, tAuctionUpdate); 
+  }, tickInterval); 
 
 }); 
 
-
-
-
-
 async function tick() {
-  await updateAuctionData().catch((error) => console.error(error));
-  updateBotActivity();
+  updateAuctionState();
+  await updateAuctionData();
+  await shareAuctionData();
+  await updateBot();
+  logTick();
 }
 
-// END TIME IS SET ONCE TIME HITS ZERO!!
+
+function updateAuctionState() {
+
+  switch (auctionState) {
+    case -1: 
+
+      // initializing
+      auctionState++;
+      break;
+      
+    case 0: 
+    
+      // getting Auction Data
+      auctionState++;
+      break;
+
+    case 1:  
+    
+      // counting down from 24:00 to 0:05 - data cached
+      const tDiff = TimeStuff.timeDiffCalc(curAuctionData[0].endDate,Date.now());
+      if(tDiff.hours < 1 && tDiff.minutes < 5 ) {
+        auctionState++;
+      }
+      break;
+
+    case 2: 
+    
+      // less than 5 minutes left - constant polling
+      if (endDate.getTime() < new Date().getTime()) {
+        auctionState++;
+      }
+      break;
+
+    case 3: 
+    
+      // It's Noun O'Clock! Run once.
+      auctionState++;
+      break;
+
+    case 4: 
+    
+      // Waiting for Auction to settle
+      if(curAuctionData[0].id != nounID) {
+        auctionState++;
+      }
+      break;
+
+    case 5: 
+    
+      // Noun minted, sharing to social! Run once
+      auctionState = 0;
+
+      break;
+    }
+}
+
+
 
 
 async function updateAuctionData() {
 
-  let tDiff = TimeStuff.timeDiffCalc(currentAuction.endTime,Date.now());
-
-  //update auction cache on init, and when there is less than 5 minutes left.
-  if(doonce || (tDiff.hours < 1 && tDiff.minutes < 4 || waitingForNounOClock == false )){
-
-    if(!doonce && (tDiff.hours < 1 && tDiff.minutes < 1 && tDiff.seconds < 1)){
-
-      if(waitingForNounOClock){
-        console.log("Posting Noun-O-Clock Notification to Discord");
-        client.channels.cache.get(process.env.DISCORD_CHANNEL_ID).send("It's Noun O'Clock! Help choose the next Noun with https://fomonouns.wtf/")
-        waitingForNounOClock = false;
-      }
-      console.log("Waiting for Auction Settlement");
-
-    }  
+  if (auctionState != 1) {
 
     const data = await NounsDAO.getLatestAuctions();
 
-
-    let index = 0;
-    doonce = false;
-
-    console.log("OLD ID: "+currentAuction.id+" NEW ID:"+data.auctions[0].id);
-    if(currentAuction.id != data.auctions[0].id) {
-      waitingForNounOClock = true;
-        //if the current Noun ends with 9, the next one released will be Nouner + additional
-        if((currentAuction.id % 10 == 9) && (currentAuction.id < 1825)) {
-          console.log("New Nounder Noun: "+ data.auctions[1].id);
-        }
-
-        console.log("New Noun: "+ data.auctions[0].id);
-
-    }
-
-    currentAuction = {
-      id : data.auctions[0].id,
-      settled : data.auctions[0].settled,
-      endTime : new Date(parseInt(data.auctions[0].endTime) * 1000)
-    }  
-
-    logTick();
+    curAuctionData = JSON.parse(JSON.stringify(data.auctions));
+    curAuctionData[0].endDate = new Date(parseInt(data.auctions[0].endTime) * 1000);
+    curAuctionData[1].endDate = new Date(parseInt(data.auctions[1].endTime) * 1000);
 
   }
+
 }
 
+
+
+async function shareAuctionData() {
+
+  let discordMessage = null;
+
+  switch (auctionState) {
+
+    case 3:
+
+      let message3 = "It's Noun O'Clock! Help choose the next Noun with https://fomonouns.wtf/";
+      console.log("POSTING TO DISCORD: " + message3);
+      client.channels.cache.get(process.env.DISCORD_CHANNEL_ID).send(message3);
+      break;
+     
+    case 5:
+
+      //if the current Noun ends with 1, the previous one was also released to Nouners. For 5 years.
+      
+      if((currentAuction[0].id % 10 == 1) && (currentAuction[0].id < 1825)) {
+
+        let message5Nounder = "New Nounder Noun: "+ currentAuction[1].id;
+        console.log("POSTING TO DISCORD: " + message5Nounder);
+        client.channels.cache.get(process.env.DISCORD_CHANNEL_ID).send(message5Nounder);
+
+      }
+
+      let message5 = "New Noun: "+ currentAuction[0].id;
+      console.log("POSTING TO DISCORD: " + message5);
+      client.channels.cache.get(process.env.DISCORD_CHANNEL_ID).send(message5);
+      break;
+    }
+
+}
+
+
+async function updateBot() {
+
+  if(auctionState > 0){
+
+    const count = TimeStuff.formatDateCountdown(curAuctionData[0].endDate);
+
+    if(auctionState == 3 || auctionState == 4) {
+  
+      client.user.setActivity("🔥fomonouns.wtf 🔥", { type: "PLAYING" });
+  
+    } else {
+  
+      client.user.setActivity(count, { type: "WATCHING" });
+  
+    }
+
+  }
+
+}
 
 function logTick () {
-  const dateNow = new Date()
-  const tDiff = TimeStuff.timeDiffCalc(currentAuction.endTime, Date.now());
 
-  const hours = tDiff.hours.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
-  const minutes = tDiff.minutes.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
-  const seconds = tDiff.seconds.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
-  const settled = (currentAuction.settled) ? "settled" : "not settled";
+  const count = TimeStuff.formatDateCountdown(curAuctionData[0].endDate);
 
-  
-  console.log(TimeStuff.formatDate(dateNow) + " - " +currentAuction.id +" - " + settled + " - " + hours + ":" + minutes + ":" + seconds);
+  const settled = (curAuctionData[0].settled) ? "settled" : "not settled";
 
-}
-
-
-async function updateBotActivity() {
-
-   let tDiff = TimeStuff.timeDiffCalc(currentAuction.endTime, Date.now());
-
-
-   let hours = tDiff.hours.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
-   let minutes = tDiff.minutes.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
-   let seconds = tDiff.seconds.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping:false});
-
-   if(waitingForNounOClock) {
-    client.user.setActivity(hours + ":" + minutes + ":" + seconds, { type: "WATCHING" });
-   } else {
-    client.user.setActivity("🔥fomonouns.wtf 🔥", { type: "PLAYING" });
-   }
+  console.log(curAuctionData[0].id + " | " + count + " - " + settled + " | "+ auctionStateDescriptors[auctionState]);
 
 }
