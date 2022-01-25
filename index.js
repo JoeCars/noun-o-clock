@@ -71,7 +71,7 @@ function updateAuctionState() {
     case 2: 
     
       // less than 5 minutes left - constant polling
-      if (endDate.getTime() < new Date().getTime()) {
+      if (curAuctionData[0].endDate.getTime() < new Date().getTime()) {
         auctionState++;
       }
       break;
