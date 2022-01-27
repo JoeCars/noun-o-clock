@@ -108,6 +108,8 @@ async function updateAuctionData() {
 
     const data = await NounsDAO.getLatestAuctions();
 
+    console.log(JSON.stringify(data));
+
     curAuctionData = JSON.parse(JSON.stringify(data.auctions));
     curAuctionData[0].endDate = new Date(parseInt(data.auctions[0].endTime) * 1000);
     curAuctionData[1].endDate = new Date(parseInt(data.auctions[1].endTime) * 1000);
