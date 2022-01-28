@@ -38,7 +38,7 @@ client.on('ready', async () => {
 async function tick() {
   updateAuctionState();
   await updateAuctionData();
-  await shareAuctionData();
+  //await shareAuctionData();
   await updateBot();
   logTick();
 }
@@ -49,51 +49,48 @@ function updateAuctionState() {
   switch (auctionState) {
     case -1: 
 
-      // initializing
-      auctionState++;
+      auctionState++; // move to state 0 - getting Auction Data
       break;
       
     case 0: 
     
-      // getting Auction Data
-      auctionState++;
+      auctionState++; // move to auction state 1 - counting down from 24:00 to 0:05 - data cached
       break;
 
     case 1:  
     
-      // counting down from 24:00 to 0:05 - data cached
       const tDiff = TimeStuff.timeDiffCalc(curAuctionData[0].endDate,Date.now());
       if(tDiff.hours < 1 && tDiff.minutes < 5 ) {
-        auctionState++;
+        auctionState++; // move to auction state 2 - less than 5 minutes left - constant polling
       }
       break;
 
     case 2: 
     
-      // less than 5 minutes left - constant polling
       if (curAuctionData[0].endDate.getTime() + 5000 < new Date().getTime()) {
-        auctionState++;
+        auctionState++; // move to auction state 3 - It's Noun O'Clock!
       }
       break;
 
     case 3: 
     
-      // It's Noun O'Clock! Run once.
-      auctionState++;
+      auctionState++; // move to auction state 4 - Noun O'Clock announced, waiting for settlement
       break;
 
     case 4: 
     
-      // Waiting for Auction to settle
       if(curAuctionData[0].id != nounID) {
-        auctionState++;
+
+        console.log("changing to state 4");
+        console.log("curAuctionData[0].id " + curAuctionData[0].id + " - nounID " + nounID );
+
+        auctionState++; // move to state 5 - Noun Minted, sharing to social
       }
       break;
 
     case 5: 
     
-      // Noun minted, sharing to social! Run once
-      auctionState = 0;
+      auctionState = 0; // move to state 0 - getting Auction Data
 
       break;
     }
@@ -107,6 +104,10 @@ async function updateAuctionData() {
   if (auctionState != 1) {
 
     const data = await NounsDAO.getLatestAuctions();
+
+    if(auctionState == 0 || auctionState == 5) {
+      nounID = data.auctions[0].id;
+    }
 
     console.log(JSON.stringify(data));
 
