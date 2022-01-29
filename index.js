@@ -36,70 +36,19 @@ client.on('ready', async () => {
 }); 
 
 async function tick() {
+
+  await getLatestAuctionData();
   updateAuctionState();
-  await updateAuctionData();
-  //await shareAuctionData();
-  await updateBot();
   logTick();
-}
+  await shareAuctionData();
+  await updateBot();
 
-
-function updateAuctionState() {
-
-  switch (auctionState) {
-    case -1: 
-
-      auctionState++; // move to state 0 - getting Auction Data
-      break;
-      
-    case 0: 
-    
-      auctionState++; // move to auction state 1 - counting down from 24:00 to 0:05 - data cached
-      break;
-
-    case 1:  
-    
-      const tDiff = TimeStuff.timeDiffCalc(curAuctionData[0].endDate,Date.now());
-      if(tDiff.hours < 1 && tDiff.minutes < 5 ) {
-        auctionState++; // move to auction state 2 - less than 5 minutes left - constant polling
-      }
-      break;
-
-    case 2: 
-    
-      if (curAuctionData[0].endDate.getTime() + 5000 < new Date().getTime()) {
-        auctionState++; // move to auction state 3 - It's Noun O'Clock!
-      }
-      break;
-
-    case 3: 
-    
-      auctionState++; // move to auction state 4 - Noun O'Clock announced, waiting for settlement
-      break;
-
-    case 4: 
-    
-      if(curAuctionData[0].id != nounID) {
-
-        console.log("changing to state 4");
-        console.log("curAuctionData[0].id " + curAuctionData[0].id + " - nounID " + nounID );
-
-        auctionState++; // move to state 5 - Noun Minted, sharing to social
-      }
-      break;
-
-    case 5: 
-    
-      auctionState = 0; // move to state 0 - getting Auction Data
-
-      break;
-    }
 }
 
 
 
 
-async function updateAuctionData() {
+async function getLatestAuctionData() {
 
   if (auctionState != 1) {
 
@@ -107,6 +56,7 @@ async function updateAuctionData() {
 
     if(auctionState == 0 || auctionState == 5) {
       nounID = data.auctions[0].id;
+      console.log("setting nounID to " + data.auctions[0].id);
     }
 
     console.log(JSON.stringify(data));
@@ -121,34 +71,100 @@ async function updateAuctionData() {
 
 
 
+
+function updateAuctionState() {
+
+  switch (auctionState) {
+    case -1: 
+
+      auctionState = 0; // getting Auction Data
+      break;
+      
+    case 0: 
+    
+      auctionState = 1; // move to auction state 1 - counting down from 24:00 to 0:05 - data cached
+      break;
+
+    case 1:  
+    
+      const tDiff = TimeStuff.timeDiffCalc(curAuctionData[0].endDate,Date.now());
+      if(tDiff.hours < 1 && tDiff.minutes < 5 ) {
+        auctionState = 2; // less than 5 minutes left - constant polling
+      }
+      break;
+
+    case 2: 
+    
+      if (curAuctionData[0].endDate.getTime() + 5000 < new Date().getTime()) {
+        auctionState = 3; // It's Noun O'Clock!
+      }
+      break;
+
+    case 3: 
+    
+      auctionState = 4; // Noun O'Clock announced, waiting for settlement
+      break;
+
+    case 4: 
+    
+      console.log("nounID " + nounID + "curAuctionData[0].id " + curAuctionData[0].id);
+      if(curAuctionData[0].id != nounID) {
+
+        console.log("NEW MINT - Changing to state 5");
+        auctionState = 5; // Noun Minted, sharing to social
+
+      }
+      break;
+
+    case 5: 
+    
+      auctionState = 0; // getting Auction Data
+
+      break;
+    }
+}
+
+
+function logTick () {
+
+  const count = TimeStuff.formatDateCountdown(curAuctionData[0].endDate);
+
+  const settled = (curAuctionData[0].settled) ? "settled" : "not settled";
+
+  console.log(curAuctionData[0].id + " | " + count + " - " + settled + " | "+ auctionStateDescriptors[auctionState]);
+
+}
+
+
 async function shareAuctionData() {
 
-  let discordMessage = null;
+  let discordMessages = [];
 
   switch (auctionState) {
 
     case 3:
 
-      let message3 = "It's Noun O'Clock! Help choose the next Noun with https://fomonouns.wtf/";
-      console.log("POSTING TO DISCORD: " + message3);
-      client.channels.cache.get(process.env.DISCORD_CHANNEL_ID).send(message3);
+      discordMessages.push("It's Noun O'Clock! Help choose the next Noun with https://fomonouns.wtf/");
       break;
      
     case 5:
 
       //if the current Noun ends with 1, the previous one was also released to Nouners. For 5 years.
-      
       if((curAuctionData[0].id % 10 == 1) && (curAuctionData[0].id < 1825)) {
 
-        let message5Nounder = "New Nounder Noun: "+ curAuctionData[1].id;
-        console.log("POSTING TO DISCORD: " + message5Nounder);
-        client.channels.cache.get(process.env.DISCORD_CHANNEL_ID).send(message5Nounder);
+        discordMessages.push("New Nounder Noun: "+ curAuctionData[1].id);
 
       }
 
-      let message5 = "New Noun: "+ curAuctionData[0].id;
-      console.log("POSTING TO DISCORD: " + message5);
-      client.channels.cache.get(process.env.DISCORD_CHANNEL_ID).send(message5);
+      discordMessages.push("New Noun: "+ curAuctionData[0].id);
+      
+      discordMessages.forEach(async function(message) {
+        
+        console.log("POSTING TO DISCORD: " + message);
+        client.channels.cache.get(process.env.DISCORD_CHANNEL_ID).send(message5);
+
+      })
+
       break;
     }
 
@@ -172,15 +188,5 @@ async function updateBot() {
     }
 
   }
-
-}
-
-function logTick () {
-
-  const count = TimeStuff.formatDateCountdown(curAuctionData[0].endDate);
-
-  const settled = (curAuctionData[0].settled) ? "settled" : "not settled";
-
-  console.log(curAuctionData[0].id + " | " + count + " - " + settled + " | "+ auctionStateDescriptors[auctionState]);
 
 }
