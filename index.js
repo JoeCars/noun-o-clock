@@ -39,9 +39,9 @@ async function tick() {
 
   await getLatestAuctionData();
   updateAuctionState();
-  logTick();
   await shareAuctionData();
   await updateBot();
+  logTick();
 
 }
 
@@ -125,17 +125,6 @@ function updateAuctionState() {
 }
 
 
-function logTick () {
-
-  const count = TimeStuff.formatDateCountdown(curAuctionData[0].endDate);
-
-  const settled = (curAuctionData[0].settled) ? "settled" : "not settled";
-
-  console.log(curAuctionData[0].id + " | " + count + " - " + settled + " | "+ auctionStateDescriptors[auctionState]);
-
-}
-
-
 async function shareAuctionData() {
 
   let discordMessages = [];
@@ -157,16 +146,15 @@ async function shareAuctionData() {
       }
 
       discordMessages.push("New Noun: "+ curAuctionData[0].id);
-      
-      discordMessages.forEach(async function(message) {
-        
-        console.log("POSTING TO DISCORD: " + message);
-        client.channels.cache.get(process.env.DISCORD_CHANNEL_ID).send(message5);
-
-      })
-
       break;
     }
+
+    discordMessages.forEach(async function(message) {
+        
+      console.log("POSTING TO DISCORD: " + message);
+      client.channels.cache.get(process.env.DISCORD_CHANNEL_ID).send(message);
+
+    })
 
 }
 
@@ -188,5 +176,16 @@ async function updateBot() {
     }
 
   }
+
+}
+
+
+function logTick () {
+
+  const count = TimeStuff.formatDateCountdown(curAuctionData[0].endDate);
+
+  // const settled = (curAuctionData[0].settled) ? "settled" : "not settled";
+
+  console.log(curAuctionData[0].id + " | " + count + " | "+ auctionStateDescriptors[auctionState]);
 
 }
