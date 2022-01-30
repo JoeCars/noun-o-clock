@@ -1,5 +1,12 @@
 const { request, gql } = require('graphql-request');
 
+
+/**
+ * Gets the two most recent Auction items from Nouns Subgraph
+ * https://thegraph.com/hosted-service/subgraph/nounsdao/nouns-subgraph
+ * @return {data} the data response
+ */
+
 async function getLatestAuctions(){
 
     const endpoint = 'https://api.thegraph.com/subgraphs/name/nounsdao/nouns-subgraph'

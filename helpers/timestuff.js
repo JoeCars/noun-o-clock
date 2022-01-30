@@ -1,5 +1,12 @@
-function timeDiffCalc(dateFuture, dateNow) {
-    let diff = Math.abs(dateFuture - dateNow) / 1000;
+/**
+ * Calculates the difference between two dates.
+ * @param {Date} date1 
+ * @param {Date} date2
+ * @return {object} The result of adding num1 and num2.
+ */
+
+function timeDiffCalc(date1, date2) {
+    let diff = Math.abs(date1 - date2) / 1000;
  
     //calc and subtract days
     const days = Math.floor(diff / 86400);
@@ -20,12 +27,24 @@ function timeDiffCalc(dateFuture, dateNow) {
 }
 
 
+
+/**
+ * Formats a date to print nicely (usually for debugging)
+ * @param {Date} date
+ * @return {string} a console friendly formatted version of the date
+ */
 function formatDate(date){
     var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     return date.toLocaleDateString("en-US", options);
 }
 
 
+
+/**
+ * Formats a date to print in a countdown format
+ * @param {Date} date
+ * @return {string} a formatted version of the date "hours:minutes:second"
+ */
 function formatDateCountdown (date) {
 
     const tDiff = timeDiffCalc(date, Date.now());
@@ -37,8 +56,8 @@ function formatDateCountdown (date) {
     return hours + ":" + minutes + ":" + seconds;
 }
   
-module.exports.timeDiffCalc = function(dateFuture, dateNow) {
-    return timeDiffCalc(dateFuture, dateNow);
+module.exports.timeDiffCalc = function(date1, date2) {
+    return timeDiffCalc(date1, date2);
 }
 
 module.exports.formatDate = function(date) {

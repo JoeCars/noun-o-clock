@@ -47,7 +47,10 @@ async function tick() {
 
 
 
-
+/**
+ * Gets the latest Nouns Auction data. If auctionState = 1 this uses doesn't run, 
+ * and cached values will be used.
+ */
 async function getLatestAuctionData() {
 
   if (auctionState != 1) {
@@ -71,7 +74,9 @@ async function getLatestAuctionData() {
 
 
 
-
+/**
+ * Updates the global auctionState variable.
+ */
 function updateAuctionState() {
 
   switch (auctionState) {
@@ -125,6 +130,10 @@ function updateAuctionState() {
 }
 
 
+/**
+ * Shares the latest auction Data - currently sharing to Discord only.
+ */
+
 async function shareAuctionData() {
 
   let discordMessages = [];
@@ -159,6 +168,10 @@ async function shareAuctionData() {
 }
 
 
+/**
+ * Updates the bot Activity to display either a countdown, or a Noun O'Clock message
+ */
+
 async function updateBot() {
 
   if(auctionState > 0){
@@ -180,6 +193,10 @@ async function updateBot() {
 }
 
 
+
+/**
+ * Logs key data from each tick to console. For debugging purposes only.
+ */
 function logTick () {
 
   const count = TimeStuff.formatDateCountdown(curAuctionData[0].endDate);
