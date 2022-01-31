@@ -150,11 +150,13 @@ async function shareAuctionData() {
       //if the current Noun ends with 1, the previous one was also released to Nouners. For 5 years.
       if((curAuctionData[0].id % 10 == 1) && (curAuctionData[0].id < 1825)) {
 
-        discordMessages.push("New Nounder Noun: "+ curAuctionData[1].id);
+        //discordMessages.push("New Nounder Noun: "+ curAuctionData[1].id);
+        console.log("New Nounder Noun: "+ curAuctionData[1].id);
 
       }
 
-      discordMessages.push("New Noun: "+ curAuctionData[0].id);
+      //discordMessages.push("New Noun: "+ curAuctionData[0].id);
+      console.log("New Noun: "+ curAuctionData[0].id);
       break;
     }
 
