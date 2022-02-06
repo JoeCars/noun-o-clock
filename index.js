@@ -1,10 +1,12 @@
 require('dotenv').config();
+const fs = require('fs');
 
-const { Client, Intents } = require('discord.js');
+const { Client, Collection, Intents } = require('discord.js');
 const token = process.env.DISCORD_TOKEN;
 const client = new Client({intents: [Intents.FLAGS.GUILDS]});
 const TimeStuff = require('./helpers/timestuff.js');
 const NounsDAO = require('./helpers/nounsdao.js');
+const mongoDB = require(`./helpers/mongodb.js`);
 
 const auctionStateDescriptors = [
   `0 - Get Auction Data`,
@@ -32,8 +34,10 @@ client.on('ready', async () => {
    setInterval(() => {
      tick();
   }, tickInterval); 
-
+  
 }); 
+
+
 
 async function tick() {
 
@@ -140,6 +144,10 @@ async function shareAuctionData() {
 
   switch (auctionState) {
 
+    // case 0: discordMessages.push("NOUN o CLOCK bot BOOTING UP");
+
+    //   break;
+
     case 3:
 
       discordMessages.push("It's Noun O'Clock! Help choose the next Noun with https://fomonouns.wtf/");
@@ -160,12 +168,18 @@ async function shareAuctionData() {
       break;
     }
 
-    discordMessages.forEach(async function(message) {
+    let guilds = await mongoDB.getAllGuilds();
+    guilds.forEach(async function(guild) {
+
+      discordMessages.forEach(async function(message) {
         
-      console.log("POSTING TO DISCORD: " + message);
-      client.channels.cache.get(process.env.DISCORD_CHANNEL_ID).send(message);
+        console.log("POSTING TO DISCORD: " + message);
+        client.channels.cache.get(guild.channel_id).send(message);
+  
+      })
 
     })
+    
 
 }
 
@@ -207,4 +221,37 @@ function logTick () {
 
   console.log(curAuctionData[0].id + " | " + count + " | "+ auctionStateDescriptors[auctionState]);
 
+}
+
+
+
+
+client.commands = new Collection();
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+for (const file of commandFiles) {
+   const command = require(`./commands/${file}`);
+   client.commands.set(command.data.name, command);
+}
+
+
+
+client.on('interactionCreate', async interaction => {
+   if (!interaction.isCommand()) return;
+
+   const command = client.commands.get(interaction.commandName);
+   
+   if (!command) return;
+
+   try {
+      await command.execute(interaction);
+   } catch (error) {
+      console.error(error);
+      return interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+   }
+});
+
+
+if(process.env.DISCORD_DEPLOY_COMMANDS == "true") {
+  require('./deploy-commands.js');
+  console.log("hello");
 }
