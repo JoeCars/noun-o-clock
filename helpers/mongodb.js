@@ -2,7 +2,7 @@ const { MongoClient } = require('mongodb');
 const dbUri = process.env.MONGODB_URI;
 
 
-async function setGuildChannel(guild_id, channel_id) {
+async function setGuildChannel(guild_id, guild_name, channel_id, channel_name) {
 
     const client = new MongoClient(dbUri, { useNewUrlParser: true, useUnifiedTopology: true });
 
@@ -17,14 +17,16 @@ async function setGuildChannel(guild_id, channel_id) {
 
             await collection.insertOne({ 
                 "guild_id":guild_id,
+                "guild_name":guild_name,
                 "channel_id":channel_id,
+                "channel_name":channel_name
             });
 
         } else {
 
             await collection.updateOne(
                 { "guild_id": guild_id}, // Filter
-                { $set: {"channel_id": channel_id} },
+                { $set: {"guild_name":guild_name, "channel_id": channel_id, "channel_name":channel_name} },
                 { upsert: true }
             )
 
@@ -107,8 +109,8 @@ async function getAllGuilds() {
 
 }
 
-module.exports.setGuildChannel = async function(guild_id, channel_id){
-    return await setGuildChannel(guild_id, channel_id);
+module.exports.setGuildChannel = async function(guild_id, guild_name, channel_id, channel_name){
+    return await setGuildChannel(guild_id, guild_name, channel_id, channel_name);
 }
 
 module.exports.getGuildChannel = async function(guild_id){

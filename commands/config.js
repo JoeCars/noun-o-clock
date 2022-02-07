@@ -12,8 +12,9 @@ module.exports = {
 
 		if (interaction.member.permissions.has("ADMINISTRATOR")){
 			const channel = interaction.options.getChannel('channel');
-			await mongoDB.setGuildChannel(interaction.guild.id, channel.id);
+			await mongoDB.setGuildChannel(interaction.guild.id, interaction.guild.name, channel.id, channel.name);
 			
+			//setGuildChannel(guild_id, guild_name, channel_id, channel_name)
 			await interaction.reply({
 				content: "posting in #" + channel.name,
 				ephemeral: true,
