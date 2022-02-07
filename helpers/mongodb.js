@@ -24,7 +24,8 @@ async function setGuildChannel(guild_id, channel_id) {
 
             await collection.updateOne(
                 { "guild_id": guild_id}, // Filter
-                {"channel_id": channel_id} // Update
+                { $set: {"channel_id": channel_id} },
+                { upsert: true }
             )
 
         }
