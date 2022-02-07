@@ -20,7 +20,7 @@ module.exports = {
 				ephemeral: true,
 			});
 		} else {
-			await interaction.reply({ content: 'Your are NOT allowed to be here.', ephemeral: true });
+			await interaction.reply({ content: 'Only Administrators can use this command - geeeeet outta here.', ephemeral: true });
 		}
 
 	},
