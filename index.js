@@ -150,7 +150,7 @@ async function shareAuctionData() {
 
     case 3:
 
-      discordMessages.push("It's Noun O'Clock! Help choose the next Noun with https://fomonouns.wtf/");
+      discordMessages.push("It's Noun O'Clock! Help choose the next Noun with https://fomonouns.wtf/ and go listen to The Noun Square on Twitter https://tinyurl.com/nounoclock");
       break;
      
     case 5:
