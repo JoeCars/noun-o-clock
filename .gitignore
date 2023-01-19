@@ -1,0 +1,16 @@
+node_modules
+.env
+config.json
+npm-debug.log
+.DS_Store
+helpers/mongodb.js
+commands/check.js
+commands/reload-test.js
+commands/scratch-pad.js
+commands/test-poll.js
+events/testReact.js
+events/react-test.js
+scratchcode/
+scratchcode/*
+validation/
+utils/remindSheet.js
