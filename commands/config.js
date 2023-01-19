@@ -4,7 +4,7 @@ const mongoDB = require(`../helpers/mongodb.js`);
 
 module.exports = {
 	data: new SlashCommandBuilder()
-		.setName('config2')
+		.setName('config')
 		.setDescription("Specify channel for announcements")
 		.addChannelOption(option => option.setName('channel').setDescription('Select a channel')),
 		
