@@ -17,13 +17,13 @@ for (const file of commandFiles) {
 const rest = new REST({ version: '9' }).setToken(token);
 
 // Used for testing - guild commands are recommended for development
-const guildId = process.env.DISCORD_GUILD_ID;
-rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commands })
-   .then(() => console.log('Successfully registered application commands.'))
-   .catch(console.error);
+// const guildId = process.env.DISCORD_GUILD_ID;
+// rest.put(Routes.applicationGuildCommands(clientId, guildId), { body: commands })
+//    .then(() => console.log('Successfully registered application commands.'))
+//    .catch(console.error);
 
 
 //used to register global application commands - 1 hour cache
-// rest.put(Routes.applicationCommands(clientId), { body: commands })
-//    .then(() => console.log('Successfully registered application commands.'))
-//    .catch(console.error);
+rest.put(Routes.applicationCommands(clientId), { body: commands })
+   .then(() => console.log('Successfully registered application commands.'))
+   .catch(console.error);
