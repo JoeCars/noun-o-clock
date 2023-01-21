@@ -58,7 +58,9 @@ const postToChannel = async function () {
   
   let embed = new MessageEmbed()
   .setDescription('Winner: **['+saleWalletTitle+']('+saleWalletLink+')**\n\n**It\'s Noun O\'Clock!\n**'+ "Help choose the next Noun: **https://fomonouns.wtf/**")
-  .setTitle("SOLD!"+saleAmount+" ETH for Noun "+nounId)
+  .setTitle("SOLD! Noun "+nounId+ " goes for " +saleAmount+" ETH")
   .setImage(nounImage)
   channel.send({embeds: [embed]})
+
+  
 }
