@@ -10,8 +10,8 @@ const mongoDB = require(`./helpers/mongodb.js`);
 
 let Nouns = null;
 let fomo = false;
-const nermanDiscordID = 919783277726957599;
-const nermanDiscordChannelId = 939984898268225609;//staging channel: 934488636035072020;
+const nermanDiscordID = '919783277726957599';
+const nermanDiscordChannelId = '939984898268225609';//staging channel: 934488636035072020;
 
 client.login(token);
 
