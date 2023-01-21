@@ -57,8 +57,8 @@ const postToChannel = async function () {
   const channel = client.channels.cache.get(nermanDiscordChannelId);
   
   let embed = new MessageEmbed()
-  .setDescription("Sold for "+saleAmount+' ETH to **['+saleWalletTitle+']('+saleWalletLink+')**\n\n'+ "Help choose the next Noun: **https://fomonouns.wtf/**")
-  .setTitle("Noun "+nounId+" Sold! Its Noun O'Clock!")
+  .setDescription('Winner: **['+saleWalletTitle+']('+saleWalletLink+')**\n\n**It\'s Noun O\'Clock!\n**'+ "Help choose the next Noun: **https://fomonouns.wtf/**")
+  .setTitle("SOLD!"+saleAmount+" ETH for Noun "+nounId)
   .setImage(nounImage)
   channel.send({embeds: [embed]})
 }
