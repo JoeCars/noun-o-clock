@@ -43,6 +43,7 @@ client.on('ready', async () => {
   Nouns.on("AuctionEnd", async (data) =>{ // CHANGE EVENT TO AUCTION END
 
     fomo = true;
+    sendNOCMessageToAllDiscords();
     console.log("Auction End - waiting for settlement");
     
   });
@@ -127,6 +128,8 @@ async function sendNOCMessageToAllDiscords() {
   guilds.forEach(async function(guild) {
 
     const channel = client.channels.cache.get(guild.channel_id);
+
+    //TODO: Check if id represents valid channel, if not, skip following code
 
     // const Discord = require('discord.js');
     let embed = new MessageEmbed()
