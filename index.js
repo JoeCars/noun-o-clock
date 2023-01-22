@@ -89,7 +89,13 @@ async function sendMessageToAllDiscords(message) {
   
   guilds.forEach(async function(guild) {
 
-    console.log("posting to " + guild.channel_id + " " + guild.name);
+    let log = "posting to " + guild.channel_id;
+
+    if(guild.name){
+      log = log + " / " + guild.name;
+    }
+
+    console.log(log);
     client.channels.cache.get(guild.channel_id).send(message);
 
   })
