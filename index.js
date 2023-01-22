@@ -89,6 +89,7 @@ async function sendMessageToAllDiscords(message) {
   
   guilds.forEach(async function(guild) {
 
+    console.log("posting to " + guild.channel_id + " " + guild.name);
     client.channels.cache.get(guild.channel_id).send(message);
 
   })
@@ -98,6 +99,7 @@ async function sendNOCMessageToAllDiscords() {
 
   // Is latest bid the winner? Do I need to check timestamp / block? I don't think so...
   // Could implement latestSold nounId
+  // this code should all be in Nerman.js
   let nounId = Nouns.cache.auction.nounId;
   let bid = await Nouns.NounsAuctionHouse.getLatestBidData(nounId);
   const now = new Date();
