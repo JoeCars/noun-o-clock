@@ -135,21 +135,23 @@ async function sendNOCMessageToAllDiscords() {
   
   guilds.forEach(async function(guild) {
 
-    const channel = client.channels.cache.get(guild.channel_id);
 
-    //TODO: Check if id represents valid channel, if not, skip following code
+    try {
+      const channel = client.channels.cache.get(guild.channel_id);
+      //TODO: Check if id represents valid channel, if not, skip following code
 
-    // const Discord = require('discord.js');
-    let embed = new MessageEmbed()
-    .setDescription('Winner: **['+saleWalletTitle+']('+saleWalletLink+')**\n\n**IT\'S NOUN O\'CLOCK!\n\n**'+ guild.message)
-    .setTitle("SOLD! Noun "+nounId+ " goes for " +saleAmount+" ETH")
-    .setImage(nounImage)
-    channel.send({embeds: [embed]})
+      // const Discord = require('discord.js');
+      let embed = new MessageEmbed()
+      .setDescription('Winner: **['+saleWalletTitle+']('+saleWalletLink+')**\n\n**IT\'S NOUN O\'CLOCK!\n\n**'+ guild.message)
+      .setTitle("SOLD! Noun "+nounId+ " goes for " +saleAmount+" ETH")
+      .setImage(nounImage)
+      channel.send({embeds: [embed]})
 
-    // image of Noun, sale price, buyer
+    } catch (error) {
+      console.error(error);
+   }
 
-    // const message = "SOLD! Noun " + 0 + " goes to test.eth for 50 ETH!\n\n" + guild.message;
-    // client.channels.cache.get(guild.channel_id).send({content: message ,files: ['https://noun.pics/0.png']});
+   // Can Nerman.js
 
   })
 }
