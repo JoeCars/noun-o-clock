@@ -143,7 +143,7 @@ async function sendNOCMessageToAllDiscords() {
       // const Discord = require('discord.js');
       let embed = new MessageEmbed()
       .setDescription('Winner: **['+saleWalletTitle+']('+saleWalletLink+')**\n\n**IT\'S NOUN O\'CLOCK!\n\n**'+ guild.message)
-      .setTitle("SOLD! Noun "+nounId+ " goes for " +saleAmount+" ETH")
+      .setTitle("SOLD! Noun "+nounId+ " for " +saleAmount+" ETH")
       .setImage(nounImage)
       channel.send({embeds: [embed]})
 
